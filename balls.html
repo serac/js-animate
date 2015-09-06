@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Canvas Animation</title>
+  <script>
+    sprites = [];
+
+    colors = [
+      "#000066", "#0000CC", "#0000FF",
+      "#006600", "#006666", "#0066CC",
+      "#00CC00", "#00CC66", "#00CCCC",
+      "#330000", "#330066", "#3300CC",
+      "#336600", "#336666", "#3366CC",
+      "#33CC00", "#33CC66", "#33CCCC",
+      "#660000", "#660066", "#6600CC",
+      "#666600", "#666666", "#6666CC",
+      "#66CC00", "#66CC66", "#66CCCC",
+      "#990000", "#990066", "#9900CC",
+      "#996600", "#996666", "#9966CC",
+      "#99CC00", "#99CC66", "#99CCCC",
+      "#CC0000", "#CC0066", "#CC00CC",
+      "#CC6600", "#CC6666", "#CC66CC",
+      "#CCCC00", "#CCCC66", "#CCCCCC",
+      "#FF0000", "#FF0066", "#FF00CC",
+      "#FF6600", "#FF6666", "#FF66CC",
+      "#FFCC00", "#FFCC66", "#FFCCCC"
+    ];
+
+    function sprite(canvas) {
+      this.canvas = canvas;
+      var min = canvas.height / 12;
+      var max = canvas.height / 6;
+      this.r = min + Math.floor((max - min) * Math.random());
+      this.x = 2 * this.r + Math.floor((canvas.width - 4 * this.r) * Math.random());
+      this.y = 2 * this.r + Math.floor((canvas.height - 4 * this.r) * Math.random());
+      this.dx = (1 + Math.floor(5 * Math.random())) * (Math.random() < 0.5 ? 1 : -1);
+      this.dy = (1 + Math.floor(5 * Math.random())) * (Math.random() < 0.5 ? 1 : -1);
+      this.context = canvas.getContext("2d");
+      this.color = colors[Math.floor(Math.random() * colors.length)]
+
+      this.outsideX= function(x1, x2) {
+        return this.x + this.r > x2 || this.x - this.r < x1;
+      }
+
+      this.outsideY = function(y1, y2) {
+        return this.y + this.r > y2 || this.y - this.r < y1;
+      }
+
+      this.move = function() {
+        if (this.outsideX(0, this.canvas.width)) {
+          this.dx *= -1;
+        }
+        this.x += this.dx;
+
+        if (this.outsideY(0, this.canvas.height)) {
+          this.dy *= -1;
+        }
+        this.y += this.dy;
+      }
+
+      this.draw = function() {
+        this.context.beginPath();
+        this.context.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+        this.context.fillStyle = this.color;
+        this.context.fill();
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <style>
+    body {
+      font-family:Helvetica,Arial,sans serif;
+    }
+    fieldset {
+      margin:10px;
+    }
+  </style>
+  <h1>Bouncing Balls Animation</h1>
+  <form>
+    <fieldset>
+      <p>Move the slider to change the number of balls.</p>
+      <input id="count" type="range" min="2" max="64" step="1" value="10" onchange="resize()">
+    </fieldset>
+  </form>
+  <canvas id="canvas" style="border:1px solid #ccc;width:100%;height:100%;background-color:#eee"></canvas>
+  <script>
+    var cnvs = document.getElementById("canvas");
+    var count = document.getElementById("count");
+    
+    for (i = 0; i < count.value; i++) {
+      sprites[i] = new sprite(cnvs);
+    }
+
+    var ctx = canvas.getContext("2d");
+
+    function animate() {
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      for (i = 0; i < sprites.length; i++) {
+        sprites[i].move();
+        sprites[i].draw();
+      }
+    }
+
+    function resize() {
+      sprites = []
+      for (i = 0; i < count.value; i++) {
+        sprites[i] = new sprite(cnvs);
+      }
+    }
+
+    setInterval(animate, 20);
+  </script>
+</body>
+</html>
