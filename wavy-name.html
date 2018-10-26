@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Wavy Name</title>
+  <script>
+    sprites = [];
+
+    colors = [
+      "#000066", "#0000CC", "#0000FF",
+      "#006600", "#006666", "#0066CC",
+      "#00CC00", "#00CC66", "#00CCCC",
+      "#330000", "#330066", "#3300CC",
+      "#336600", "#336666", "#3366CC",
+      "#33CC00", "#33CC66", "#33CCCC",
+      "#660000", "#660066", "#6600CC",
+      "#666600", "#666666", "#6666CC",
+      "#66CC00", "#66CC66", "#66CCCC",
+      "#990000", "#990066", "#9900CC",
+      "#996600", "#996666", "#9966CC",
+      "#99CC00", "#99CC66", "#99CCCC",
+      "#CC0000", "#CC0066", "#CC00CC",
+      "#CC6600", "#CC6666", "#CC66CC",
+      "#CCCC00", "#CCCC66", "#CCCCCC",
+      "#FF0000", "#FF0066", "#FF00CC",
+      "#FF6600", "#FF6666", "#FF66CC",
+      "#FFCC00", "#FFCC66", "#FFCCCC"
+    ];
+
+    function sprite(text, index, canvas) {
+      var length = text.length;
+      this.letter = text.charAt(index);
+      this.amplitude = canvas.height * 0.3;
+      this.yOffset = canvas.height / 2;
+      this.x = index * (canvas.width / length) + 2;
+      this.dt = Math.PI / 100;
+      this.t = 2 * Math.PI * index / length;
+      this.context = canvas.getContext("2d");
+      this.context.font = "30px monospace";
+
+      this.move = function() {
+        this.t += this.dt;
+        var index = Math.floor(this.t) % colors.length;
+        this.context.fillStyle = colors[Math.floor(this.t) % colors.length];
+        this.y = this.yOffset + this.amplitude * Math.sin(this.t);
+        console.log("Moving to (" + this.x + ", " + this.y + ")");
+      }
+
+      this.draw = function() {
+        this.context.fillText(this.letter, this.x, this.y);
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <style>
+    body {
+      font-family:Helvetica,Arial,sans serif;
+    }
+    fieldset {
+      margin:10px;
+    }
+  </style>
+  <h1>Wavy Name Animation</h1>
+  <form action="#">
+    <fieldset>
+      <label for="name">Type your name</label>
+      <input type="text" id="name" value="Your Name" onkeyup="init()">
+    </fieldset>
+  </form>
+  <canvas id="canvas" style="border:1px solid #ccc;width:100%;height:100%;background-color:#eee"></canvas>
+  <script>
+    function animate() {
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (i = 0; i < sprites.length; i++) {
+        sprites[i].move();
+        sprites[i].draw();
+      }
+    }
+
+    function init() {
+      sprites = []
+      var name = document.getElementById("name").value;
+      var canvas = document.getElementById("canvas");
+      for (i = 0; i < name.length; i++) {
+        sprites[i] = new sprite(name, i, canvas);
+      }
+    }
+
+    init();
+
+    // Set up animation loop
+    setInterval(animate, 20);
+  </script>
+</body>
+</html>

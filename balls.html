@@ -69,7 +69,7 @@
   </script>
 </head>
 
-<body>
+<body onload="init()">
   <style>
     body {
       font-family:Helvetica,Arial,sans serif;
@@ -82,21 +82,14 @@
   <form>
     <fieldset>
       <p>Move the slider to change the number of balls.</p>
-      <input id="count" type="range" min="2" max="64" step="1" value="10" onchange="resize()">
+      <input id="count" type="range" min="2" max="64" step="1" value="10" onchange="init()">
     </fieldset>
   </form>
   <canvas id="canvas" style="border:1px solid #ccc;width:100%;height:100%;background-color:#eee"></canvas>
   <script>
-    var cnvs = document.getElementById("canvas");
-    var count = document.getElementById("count");
-    
-    for (i = 0; i < count.value; i++) {
-      sprites[i] = new sprite(cnvs);
-    }
-
-    var ctx = canvas.getContext("2d");
-
     function animate() {
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       for (i = 0; i < sprites.length; i++) {
         sprites[i].move();
@@ -104,10 +97,11 @@
       }
     }
 
-    function resize() {
+    function init() {
+      var canvas = document.getElementById("canvas");
       sprites = []
       for (i = 0; i < count.value; i++) {
-        sprites[i] = new sprite(cnvs);
+        sprites[i] = new sprite(canvas);
       }
     }
 
